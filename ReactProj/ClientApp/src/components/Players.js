@@ -56,7 +56,7 @@ export function Players() {
                 <div class="col-sm-2"></div>
                 <div class="col-auto">
                     <button type="submit" disabled={isSubmitting} class="btn btn-info" >
-                        {isSubmitting ? 'Saving...' : 'Enter Score'}</button>
+                        {isSubmitting ? 'Saving...' : 'Add Player'}</button>
                 </div>
             </div>
         </form >

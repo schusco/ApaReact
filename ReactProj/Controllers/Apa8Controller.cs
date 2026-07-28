@@ -19,7 +19,7 @@ namespace ReactProj.Controllers
                 return BadRequest("Unable to save, please ensure all fields are filled.");
             var success = Repository.Add8BallScore(model);
             if (success)
-                return Ok();
+                return Ok(model);
             return BadRequest("Unable to save, error occurred");
         }
     }
