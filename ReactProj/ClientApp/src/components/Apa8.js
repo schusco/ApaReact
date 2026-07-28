@@ -52,7 +52,7 @@ function APA8() {
             <div class="row g-3 mb-3">
                 <label for="ballsInput" class="col-sm-2 col-form-label">Games</label>
                 <div class="col-auto">
-                    <input type="number" class="form-control" name="points" value={data.games} onChange={handleChange} />
+                    <input type="number" class="form-control" name="games" value={data.games} onChange={handleChange} />
                 </div>
             </div>
             <div class="row g-3 mb-3">

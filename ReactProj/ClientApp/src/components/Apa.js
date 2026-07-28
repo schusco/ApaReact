@@ -85,7 +85,6 @@ function APA() {
                 <div class="col-auto">
                     <button type="submit" disabled={isSubmitting} class="btn btn-info" >
                         {isSubmitting ? 'Saving...' : 'Enter Score'}</button>
-
                 </div>
             </div>
         </form>

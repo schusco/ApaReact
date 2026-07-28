@@ -17,8 +17,7 @@ function Stats() {
             } catch (error) {
                 console.error('Error fetching scores:', error);
             } finally {
-                setIsLoading(false);
-                console.log('loading set to false');
+                setIsLoading(false);                
             }
         }
         fetchScores();
@@ -34,14 +33,12 @@ function Stats() {
             acc.totalPoints += item.points;
             if (item.balls > 0) {
                 if ((item.balls / item.innings) > nineBallBenchmark) {
-                    acc.shotOverLevel += 1;
-                    console.log(item);
+                    acc.shotOverLevel += 1;                    
                 }
             }
             else {
                 if ((item.innings / item.games) < eightBallBenchmark) {
-                    acc.shotOverLevel += 1;
-                    console.log(item);
+                    acc.shotOverLevel += 1;                    
                 }
             }
             if (item.isWin === true) {
@@ -73,8 +70,7 @@ function Stats() {
         }, {
             wins: 0, losses: 0, winsAtLevel: 0, lossesAtLevel: 0, winsPlayingUp: 0, winsPlayingDown: 0, lossesPlayingDown: 0, shotOverLevel: 0,
             lossesPlayingUp: 0, pointsAverage: 0, defensesAverage: 0, inningsAverage: 0, totalDefenses: 0, totalInnings: 0, totalPoints: 0
-        });
-        console.log(counts);
+        });        
         counts.pointsAverage = counts.totalPoints / 20;
         counts.defensesAverage = counts.totalDefenses / 20;
         counts.inningsAverage = counts.totalInnings / 20;

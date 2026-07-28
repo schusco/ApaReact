@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactProj", "ReactProj\Reac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCode", "TestCode\TestCode.csproj", "{C31802B7-63A3-44A3-BA90-B9BA95111D9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp1", "..\WebApplication2\BlazorApp1\BlazorApp1.csproj", "{ACA3E415-C5E4-0BB7-A824-870FFCD5B991}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{C31802B7-63A3-44A3-BA90-B9BA95111D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C31802B7-63A3-44A3-BA90-B9BA95111D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C31802B7-63A3-44A3-BA90-B9BA95111D9B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ACA3E415-C5E4-0BB7-A824-870FFCD5B991}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ACA3E415-C5E4-0BB7-A824-870FFCD5B991}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ACA3E415-C5E4-0BB7-A824-870FFCD5B991}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ACA3E415-C5E4-0BB7-A824-870FFCD5B991}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,8 +32,7 @@ export function useFormHandler(initialState, apiEndpoint, onSuccess) {
                 const errorText = await response.text();
                 throw new Error(errorText || 'Submission failed');
             }
-            const result = await response.json();
-            console.log(result);
+            const result = await response.json();            
             setSuccess(true);  // Set success state on successful submission
             // Reset form on success or handle post-submit logic
             setFormData(initialState);
