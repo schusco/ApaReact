@@ -1,16 +1,28 @@
 ﻿using MySql.Data.MySqlClient;
-using System.Resources;
 using ReactProj.Models;
 
 namespace ReactProj
 {
-    public class Repository
+    public interface IRepository
     {
-        public static ResourceManager Rm { get; } = new ResourceManager("ReactProj.Properties.Resources", typeof(Repository).Assembly);
-
-        internal static IList<APA9BallScore> Get9BallScores()
+        public IList<APA9BallScore> Get9BallScores();
+        IList<APA8BallScore> Get8BallScores();
+        IList<APAPlayer> GetPlayers();
+        bool Add9BallScore(Player9BallScore model);
+        bool AddPlayer(APAPlayer newPlayer);
+        bool IsDuplicatePlayer(int number);
+        bool Add8BallScore(Player8BallScore model);
+    }
+    public class Repository : IRepository
+    {
+        private readonly string _connectionString = "";
+        public Repository(string defaultConnection)
         {
-            using var dbCon = new MySqlConnection(Rm.GetString("MySqlConString"));
+            _connectionString = defaultConnection;
+        }
+        public IList<APA9BallScore> Get9BallScores()
+        {
+            using var dbCon = new MySqlConnection(_connectionString);
             dbCon.Open();
             using var cmd = new MySqlCommand("SELECT * FROM scores9 order by scoredate desc limit 20", dbCon);
             var reader = cmd.ExecuteReader();
@@ -29,9 +41,9 @@ namespace ReactProj
             }
             return scores;
         }
-        internal static IList<APA8BallScore> Get8BallScores()
+        public IList<APA8BallScore> Get8BallScores()
         {
-            using var dbCon = new MySqlConnection(Rm.GetString("MySqlConString"));
+            using var dbCon = new MySqlConnection(_connectionString);
             dbCon.Open();
             using var cmd = new MySqlCommand("SELECT * FROM scores8 order by scoredate desc limit 20", dbCon);
             var reader = cmd.ExecuteReader();
@@ -49,9 +61,9 @@ namespace ReactProj
             }
             return scores;
         }
-        internal static IList<APAPlayer> GetPlayers()
+        public IList<APAPlayer> GetPlayers()
         {
-            using var dbCon = new MySqlConnection(Rm.GetString("MySqlConString"));
+            using var dbCon = new MySqlConnection(_connectionString);
             dbCon.Open();
             using var cmd = new MySqlCommand("SELECT * FROM apaplayers order by lastName asc", dbCon);
             var reader = cmd.ExecuteReader();
@@ -65,11 +77,11 @@ namespace ReactProj
             }
             return scores;
         }
-        internal static bool Add9BallScore(Player9BallScore model)
+        public bool Add9BallScore(Player9BallScore model)
         {
             try
             {
-                using var dbCon = new MySqlConnection(Rm.GetString("MySqlConString"));
+                using var dbCon = new MySqlConnection(_connectionString);
                 dbCon.Open();
                 using var cmd = new MySqlCommand("insert into scores9 values (default,@date,@result,@innings,@defenses,@balls,@sl,@oppsl,@oppballs,@playerid,@oppid)", dbCon);
                 cmd.Parameters.AddWithValue("@date", model.Date);
@@ -91,12 +103,11 @@ namespace ReactProj
                 return false;
             }
         }
-
-        internal static bool AddPlayer(APAPlayer newPlayer)
+        public bool AddPlayer(APAPlayer newPlayer)
         {
             try
             {
-                using var dbCon = new MySqlConnection(Rm.GetString("MySqlConString"));
+                using var dbCon = new MySqlConnection(_connectionString);
                 dbCon.Open();
                 using var cmd = new MySqlCommand("insert into apaplayers values (@id,@last,@first,@score)", dbCon);
                 cmd.Parameters.AddWithValue("@id", newPlayer.PlayerNumber);
@@ -111,21 +122,20 @@ namespace ReactProj
                 return false;
             }
         }
-        internal static bool IsDuplicatePlayer(int number)
+        public bool IsDuplicatePlayer(int number)
         {
-            using var dbCon = new MySqlConnection(Rm.GetString("MySqlConString"));
+            using var dbCon = new MySqlConnection(_connectionString);
             dbCon.Open();
             using var cmd = new MySqlCommand("SELECT count(*) FROM apaplayers where playerId=@number", dbCon);
             cmd.Parameters.AddWithValue("@number", number);
             var result = Convert.ToInt32(cmd.ExecuteScalar());
             return result == 1;
         }
-
-        internal static bool Add8BallScore(Player8BallScore model)
+        public bool Add8BallScore(Player8BallScore model)
         {
             try
             {
-                using var dbCon = new MySqlConnection(Rm.GetString("MySqlConString"));
+                using var dbCon = new MySqlConnection(_connectionString);
                 dbCon.Open();
                 using var cmd = new MySqlCommand("insert into scores8 values (default,@result,@date,@innings,@defenses,@sl,@oppsl,@playerid,@games,@oppid)", dbCon);
                 cmd.Parameters.AddWithValue("@result", model.Points);

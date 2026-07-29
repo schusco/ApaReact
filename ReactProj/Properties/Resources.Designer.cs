@@ -59,14 +59,5 @@ namespace ReactProj.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User Id=pi;Password=test;Host=localhost;Database=apa.
-        /// </summary>
-        internal static string MySqlConString {
-            get {
-                return ResourceManager.GetString("MySqlConString", resourceCulture);
-            }
-        }
     }
 }

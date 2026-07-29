@@ -5,8 +5,10 @@ namespace ReactProj.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ApaController : ControllerBase
+    public class ApaController : BaseController
     {
+        public ApaController(IRepository repository) : base(repository) { }
+
         [HttpGet]
         public IList<APA9BallScore> Get()
         {

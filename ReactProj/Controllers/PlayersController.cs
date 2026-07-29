@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using ReactProj.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace ReactProj.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PlayersController : ControllerBase
+    public class PlayersController : BaseController
     {
+        public PlayersController(IRepository repository) : base(repository) { }
+
         [HttpGet]
         public IActionResult GetPlayers()
         {

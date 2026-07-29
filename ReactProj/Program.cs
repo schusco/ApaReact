@@ -1,3 +1,5 @@
+using ReactProj;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,7 +14,8 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-
+var con = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddScoped<IRepository>(sp => new Repository(con));
 var app = builder.Build();
 app.UseCors("AllowReactApp");
 // Configure the HTTP request pipeline.
