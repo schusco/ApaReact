@@ -2,12 +2,8 @@
 
 namespace ReactProj.Controllers
 {
-    public class BaseController : ControllerBase
+    public class BaseController(IRepository repository) : ControllerBase
     {
-        public BaseController(IRepository repository)
-        {
-            Repository = repository;
-        }
-        protected IRepository Repository { get; set; }
+        protected IRepository Repository { get; set; } = repository;
     }
 }

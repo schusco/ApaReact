@@ -5,6 +5,7 @@ import { Layout } from './components/Layout';
 import './custom.css';
 import './components/site.css';
 import { PlayerProvider } from './context/PlayerContext';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default class App extends Component {
     static displayName = App.name;

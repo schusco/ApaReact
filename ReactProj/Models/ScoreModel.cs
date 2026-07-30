@@ -51,7 +51,7 @@ namespace ReactProj.Models
                 return false;
             return true;
         }
-        public int PlayerId { get; set; } = 2371;
+        public int PlayerId { get; set; }
 
     }
     public class Player9BallScore : PlayerScore

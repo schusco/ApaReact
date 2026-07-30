@@ -1,12 +1,15 @@
 ﻿// src/hooks/useFormHandler.js
 import { useState } from 'react';
+import { usePlayers } from '../context/PlayerContext';
 
-export function useFormHandler(initialState, apiEndpoint, onSuccess) {
+export function useFormHandler(initialState, apiEndpoint, onSuccess, method) {
     const [formData, setFormData] = useState(initialState);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);       // <-- Added error state
-    const [success, setSuccess] = useState(false);  // <-- Added success state
-    // Shared change handler
+    const [success, setSuccess] = useState(false);  // <-- Added success state    
+    if (!method) {
+        method = 'POST';
+    }
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -14,16 +17,16 @@ export function useFormHandler(initialState, apiEndpoint, onSuccess) {
             [name]: value
         }));
     };
-
+      
     // Shared submit handler
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {        
         e.preventDefault();
         setIsSubmitting(true);
         setError(null);   // Reset error state
         setSuccess(false); // Reset success state
         try {
             const response = await fetch(apiEndpoint, {
-                method: 'POST',
+                method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
@@ -48,5 +51,5 @@ export function useFormHandler(initialState, apiEndpoint, onSuccess) {
         }
     };
 
-    return { formData, handleChange, handleSubmit, isSubmitting, error, success };
+    return { formData, handleChange, handleSubmit, isSubmitting, error, success, setFormData };
 }

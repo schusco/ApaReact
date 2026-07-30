@@ -1,101 +1,66 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Dapper;
+using MySql.Data.MySqlClient;
 using ReactProj.Models;
 
 namespace ReactProj
 {
     public interface IRepository
     {
-        public IList<APA9BallScore> Get9BallScores();
-        IList<APA8BallScore> Get8BallScores();
-        IList<APAPlayer> GetPlayers();
-        bool Add9BallScore(Player9BallScore model);
-        bool AddPlayer(APAPlayer newPlayer);
-        bool IsDuplicatePlayer(int number);
-        bool Add8BallScore(Player8BallScore model);
+        Task<IList<APA9BallScore>> Get9BallScores();
+        Task<IList<APA8BallScore>> Get8BallScores();
+        Task<IList<APAPlayer>> GetPlayers();
+        Task<bool> Add9BallScore(Player9BallScore model);
+        Task<bool> AddPlayer(APAPlayer newPlayer);
+        Task<bool> IsDuplicatePlayer(int number);
+        Task<bool> Add8BallScore(Player8BallScore model);
+        Task<APAPlayer> ValidateLogin(int playerNumber, string password);
+        Task<bool> UpdatePlayer(APAPlayer player);
     }
-    public class Repository : IRepository
+    public class Repository(string defaultConnection) : IRepository
     {
-        private readonly string _connectionString = "";
-        public Repository(string defaultConnection)
+        private readonly string _connectionString = defaultConnection;
+        public async Task<IList<APA9BallScore>> Get9BallScores()
         {
-            _connectionString = defaultConnection;
+            await using var dbCon = new MySqlConnection(_connectionString);
+            await dbCon.OpenAsync();
+            var scores = await dbCon.QueryAsync<APA9BallScore>("SELECT scoredate as Date,result as isWin,innings,defenses,balls,oppBalls,sl as PlayerSl,oppsl as OppPlayerSl FROM scores9 order by scoredate desc limit 20");
+            return [.. scores];
         }
-        public IList<APA9BallScore> Get9BallScores()
+        public async Task<IList<APA8BallScore>> Get8BallScores()
         {
-            using var dbCon = new MySqlConnection(_connectionString);
-            dbCon.Open();
-            using var cmd = new MySqlCommand("SELECT * FROM scores9 order by scoredate desc limit 20", dbCon);
-            var reader = cmd.ExecuteReader();
-            var scores = new List<APA9BallScore>();
-            while (reader.Read())
-            {
-                var date = reader.GetDateTime("scoredate");
-                var isWin = reader.GetBoolean("result");
-                var innings = reader.GetInt32("innings");
-                var defenses = reader.GetInt32("defenses");
-                var balls = reader.GetInt32("balls");
-                var playerSL = reader.GetInt32("sl");
-                var oppBalls = reader.GetInt32("oppBalls");
-                var oppPlayerSL = reader.GetInt32("oppSL");
-                scores.Add(new APA9BallScore(date, isWin, innings, defenses, balls, playerSL, oppBalls, oppPlayerSL));
-            }
-            return scores;
+            await using var dbCon = new MySqlConnection(_connectionString);
+            await dbCon.OpenAsync();
+            var scores = await dbCon.QueryAsync<APA8BallScore>("SELECT * FROM scores8 order by scoredate desc limit 20");
+            return [.. scores];
         }
-        public IList<APA8BallScore> Get8BallScores()
+        public async Task<IList<APAPlayer>> GetPlayers()
         {
-            using var dbCon = new MySqlConnection(_connectionString);
-            dbCon.Open();
-            using var cmd = new MySqlCommand("SELECT * FROM scores8 order by scoredate desc limit 20", dbCon);
-            var reader = cmd.ExecuteReader();
-            var scores = new List<APA8BallScore>();
-            while (reader.Read())
-            {
-                var date = reader.GetDateTime("scoredate");
-                var result = reader.GetInt32("result");
-                var innings = reader.GetInt32("innings");
-                var defenses = reader.GetInt32("defenses");
-                var playerSL = reader.GetInt32("sl");
-                var oppPlayerSL = reader.GetInt32("oppSL");
-                var games = reader.GetInt32("games");
-                scores.Add(new APA8BallScore(date, result, innings, defenses, playerSL, oppPlayerSL, games));
-            }
-            return scores;
+            await using var dbCon = new MySqlConnection(_connectionString);
+            await dbCon.OpenAsync();
+            var scores = await dbCon.QueryAsync<APAPlayer>("SELECT * FROM apaplayers order by lastName asc");
+            return [.. scores];
         }
-        public IList<APAPlayer> GetPlayers()
-        {
-            using var dbCon = new MySqlConnection(_connectionString);
-            dbCon.Open();
-            using var cmd = new MySqlCommand("SELECT * FROM apaplayers order by lastName asc", dbCon);
-            var reader = cmd.ExecuteReader();
-            var scores = new List<APAPlayer>();
-            while (reader.Read())
-            {
-                var number = reader.GetInt32("playerId");
-                var lname = reader.GetString("lastName");
-                var fname = reader.GetString("firstName");
-                scores.Add(new APAPlayer(number, lname, fname));
-            }
-            return scores;
-        }
-        public bool Add9BallScore(Player9BallScore model)
+        public async Task<bool> Add9BallScore(Player9BallScore model)
         {
             try
             {
-                using var dbCon = new MySqlConnection(_connectionString);
-                dbCon.Open();
-                using var cmd = new MySqlCommand("insert into scores9 values (default,@date,@result,@innings,@defenses,@balls,@sl,@oppsl,@oppballs,@playerid,@oppid)", dbCon);
-                cmd.Parameters.AddWithValue("@date", model.Date);
                 var result = PointTable.GetBallsToWin(model.Sl.GetValueOrDefault()) == model.Balls ? 1 : 0;
-                cmd.Parameters.AddWithValue("@result", result);
-                cmd.Parameters.AddWithValue("@innings", model.Innings);
-                cmd.Parameters.AddWithValue("@defenses", model.Defenses);
-                cmd.Parameters.AddWithValue("@balls", model.Balls);
-                cmd.Parameters.AddWithValue("@sl", model.Sl);
-                cmd.Parameters.AddWithValue("@oppsl", model.OppSl);
-                cmd.Parameters.AddWithValue("@oppballs", model.OppBalls);
-                cmd.Parameters.AddWithValue("@playerid", model.PlayerId);
-                cmd.Parameters.AddWithValue("@oppid", model.OppPlayerId);
-                cmd.ExecuteNonQuery();
+                await using var dbCon = new MySqlConnection(_connectionString);
+                await dbCon.OpenAsync();
+                dbCon.Query("insert into scores9 values (default,@date,@result,@innings,@defenses,@balls,@sl,@oppsl,@oppballs,@playerid,@oppid)",
+                    new
+                    {
+                        date = model.Date,
+                        result,
+                        innings = model.Innings,
+                        defenses = model.Defenses,
+                        balls = model.Balls,
+                        sl = model.Sl,
+                        oppsl = model.OppSl,
+                        oppballs = model.OppBalls,
+                        playerid = model.PlayerId,
+                        oppid = model.OppPlayerId
+                    });
                 return true;
             }
             catch (Exception)
@@ -103,18 +68,14 @@ namespace ReactProj
                 return false;
             }
         }
-        public bool AddPlayer(APAPlayer newPlayer)
+        public async Task<bool> AddPlayer(APAPlayer newPlayer)
         {
             try
             {
-                using var dbCon = new MySqlConnection(_connectionString);
-                dbCon.Open();
-                using var cmd = new MySqlCommand("insert into apaplayers values (@id,@last,@first,@score)", dbCon);
-                cmd.Parameters.AddWithValue("@id", newPlayer.PlayerNumber);
-                cmd.Parameters.AddWithValue("@last", newPlayer.LastName);
-                cmd.Parameters.AddWithValue("@first", newPlayer.FirstName);
-                cmd.Parameters.AddWithValue("@score", newPlayer.CanScoreFor);
-                cmd.ExecuteNonQuery();
+                await using var dbCon = new MySqlConnection(_connectionString);
+                await dbCon.OpenAsync();
+                await dbCon.QueryAsync("insert into apaplayers values (@id,@last,@first,@score)",
+                    new { id = newPlayer.PlayerNumber, last = newPlayer.LastName, first = newPlayer.FirstName, score = newPlayer.CanScoreFor });
                 return true;
             }
             catch (Exception)
@@ -122,38 +83,60 @@ namespace ReactProj
                 return false;
             }
         }
-        public bool IsDuplicatePlayer(int number)
+        public async Task<bool> IsDuplicatePlayer(int number)
         {
-            using var dbCon = new MySqlConnection(_connectionString);
-            dbCon.Open();
-            using var cmd = new MySqlCommand("SELECT count(*) FROM apaplayers where playerId=@number", dbCon);
-            cmd.Parameters.AddWithValue("@number", number);
-            var result = Convert.ToInt32(cmd.ExecuteScalar());
+            await using var dbCon = new MySqlConnection(_connectionString);
+            await dbCon.OpenAsync();
+            var result = await dbCon.QueryFirstAsync<int>("SELECT count(*) FROM apaplayers where playerId=@number", new { number });
             return result == 1;
         }
-        public bool Add8BallScore(Player8BallScore model)
+        public async Task<bool> Add8BallScore(Player8BallScore model)
         {
             try
             {
-                using var dbCon = new MySqlConnection(_connectionString);
-                dbCon.Open();
-                using var cmd = new MySqlCommand("insert into scores8 values (default,@result,@date,@innings,@defenses,@sl,@oppsl,@playerid,@games,@oppid)", dbCon);
-                cmd.Parameters.AddWithValue("@result", model.Points);
-                cmd.Parameters.AddWithValue("@date", model.Date);
-                cmd.Parameters.AddWithValue("@innings", model.Innings);
-                cmd.Parameters.AddWithValue("@defenses", model.Defenses);
-                cmd.Parameters.AddWithValue("@sl", model.Sl);
-                cmd.Parameters.AddWithValue("@oppsl", model.OppSl);
-                cmd.Parameters.AddWithValue("@playerid", model.PlayerId);
-                cmd.Parameters.AddWithValue("@games", model.Games);
-                cmd.Parameters.AddWithValue("@oppid", model.OppPlayerId);
-                cmd.ExecuteNonQuery();
+                await using var dbCon = new MySqlConnection(_connectionString);
+                await dbCon.OpenAsync();
+                await dbCon.QueryAsync("insert into scores8 values (default,@result,@date,@innings,@defenses,@sl,@oppsl,@playerid,@games,@oppid)",
+                       new
+                       {
+                           result = model.Points,
+                           date = model.Date,
+                           innings = model.Innings,
+                           defenses = model.Defenses,
+                           sl = model.Sl,
+                           oppsl = model.OppSl,
+                           playerid = model.PlayerId,
+                           games = model.Games,
+                           oppid = model.OppPlayerId
+                       });
                 return true;
             }
             catch (Exception)
             {
                 return false;
+            }
+        }
+        public async Task<APAPlayer> ValidateLogin(int playerNumber, string password)
+        {
+            await using var dbCon = new MySqlConnection(_connectionString);
+            await dbCon.OpenAsync();
+            var result = await dbCon.QuerySingleAsync<APAPlayer>("SELECT * from apa.apaplayers where playerId=@no and scoreable=1", new { no = playerNumber });
+            return result;
+        }
 
+        public async Task<bool> UpdatePlayer(APAPlayer player)
+        {
+            try
+            {
+                await using var dbCon = new MySqlConnection(_connectionString);
+                await dbCon.OpenAsync();
+                await dbCon.QueryAsync("update apaplayers set curSl8=@sl8, curSl9=@sl9, lastName=@ln, firstName=@fn where playerId=@no",
+                    new { no = player.PlayerNumber, ln = player.LastName, fn = player.FirstName, sl8 = player.Sl8, sl9 = player.Sl9 });
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

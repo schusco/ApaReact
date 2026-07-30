@@ -1,4 +1,6 @@
+using Dapper.FluentMap;
 using ReactProj;
+using ReactProj.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,11 @@ builder.Services.AddCors(options =>
 });
 var con = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<IRepository>(sp => new Repository(con));
+FluentMapper.Initialize(config =>
+{
+    config.AddMap(new APA8BallScoreMap());
+    config.AddMap(new APAPlayerMap());
+});
 var app = builder.Build();
 app.UseCors("AllowReactApp");
 // Configure the HTTP request pipeline.

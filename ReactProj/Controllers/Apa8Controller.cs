@@ -5,21 +5,19 @@ namespace ReactProj.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Apa8Controller : BaseController
+    public class Apa8Controller(IRepository repository) : BaseController(repository)
     {
-        public Apa8Controller(IRepository repository) : base(repository) { }
-
         [HttpGet]
-        public IList<APA8BallScore> Get()
+        public async Task<IList<APA8BallScore>> Get()
         {
-            return Repository.Get8BallScores();
+            return await Repository.Get8BallScores();
         }
         [HttpPost]
-        public IActionResult Post([FromBody] Player8BallScore model)
+        public async Task<IActionResult> Post([FromBody] Player8BallScore model)
         {
             if (!model.IsValid())
                 return BadRequest("Unable to save, please ensure all fields are filled.");
-            var success = Repository.Add8BallScore(model);
+            var success = await Repository.Add8BallScore(model);
             if (success)
                 return Ok(model);
             return BadRequest("Unable to save, error occurred");

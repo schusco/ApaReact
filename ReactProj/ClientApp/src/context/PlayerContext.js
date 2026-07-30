@@ -3,6 +3,7 @@
 const PlayerContext = createContext();
 
 export function PlayerProvider({ children }) {
+    const [user, setUser] = useState(null);
     const [playerList, setPlayerList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     // Fetch once when the app boots up
@@ -19,8 +20,25 @@ export function PlayerProvider({ children }) {
             });
     }, []);
 
+    const login = async (playerNumber, password) => {
+        const loginResponse = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ playerNumber, password })
+        });
+        if (!loginResponse.ok) {
+            throw new Error('Login failed');
+        }
+        const result = await loginResponse.json();        
+        setUser({ result });
+    }
+
+    const logout = () => {
+        setUser(null);
+    }
+
     return (
-        <PlayerContext.Provider value={{ playerList, setPlayerList, isLoading }}>
+        <PlayerContext.Provider value={{ playerList, setPlayerList, isLoading, user, setUser, login, logout }}>
             {children}
         </PlayerContext.Provider>
     );
