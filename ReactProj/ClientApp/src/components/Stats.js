@@ -25,8 +25,7 @@ function Stats() {
         fetchScores();
     }, []);
     
-    const calculate = (data) => {
-        console.log(data);
+    const calculate = (data) => {        
         const nineBallBenchmark = 3.1; // Balls per Inning        
         const eightBallBenchmark = 2.5; // innings per rack
         const counts = data.reduce((acc, item) => {
@@ -99,7 +98,7 @@ function Stats() {
                     onClick={() => setActiveTab('8')}>8 Ball Stats</button>
             </div>
             <div className="row">
-                <div clclassNameass="col-sm-2">
+                <div className="col-sm-2">
                     <h3 className="pt-2">Overall</h3>
                 </div>
                 <div className="col-sm-2">

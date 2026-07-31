@@ -1,4 +1,6 @@
 ﻿
+using System.Text.Json.Serialization;
+
 namespace ReactProj.Models
 {
     public class APAPlayer
@@ -17,6 +19,8 @@ namespace ReactProj.Models
         public bool CanScoreFor { get; set; }
         public int Sl8 { get; set; }
         public int Sl9 { get; set; }
+        [JsonIgnore]
+        public string? Password { get; set; }
         public string FullName => $"{LastName}, {FirstName}";
     }
 }

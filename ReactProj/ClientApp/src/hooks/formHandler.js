@@ -39,8 +39,7 @@ export function useFormHandler(initialState, apiEndpoint, onSuccess, method) {
             setSuccess(true);  // Set success state on successful submission
             // Reset form on success or handle post-submit logic
             setFormData(initialState);
-            if (onSuccess) {
-                console.log('running success handler');
+            if (onSuccess) {                
                 onSuccess(result);  // Call the onSuccess callback if provided
             }
         } catch (err) {            

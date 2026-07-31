@@ -1,6 +1,6 @@
 ﻿import React, { createContext, useState, useEffect, useContext } from 'react';
 
-const PlayerContext = createContext();
+export const PlayerContext = createContext();
 
 export function PlayerProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -20,16 +20,16 @@ export function PlayerProvider({ children }) {
             });
     }, []);
 
-    const login = async (playerNumber, password) => {
-        const loginResponse = await fetch('/api/auth', {
+    const login = async (playerNumber, password, hasPassword) => {
+        const loginResponse = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ playerNumber, password })
+            body: JSON.stringify({ playerNumber, password, hasPassword })
         });
         if (!loginResponse.ok) {
             throw new Error('Login failed');
         }
-        const result = await loginResponse.json();        
+        const result = await loginResponse.json();
         setUser({ result });
     }
 

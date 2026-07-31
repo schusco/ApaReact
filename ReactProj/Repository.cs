@@ -1,6 +1,9 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Identity;
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Ocsp;
 using ReactProj.Models;
+using static com.sun.tools.@internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 
 namespace ReactProj
 {
@@ -15,6 +18,9 @@ namespace ReactProj
         Task<bool> Add8BallScore(Player8BallScore model);
         Task<APAPlayer> ValidateLogin(int playerNumber, string password);
         Task<bool> UpdatePlayer(APAPlayer player);
+        Task<bool> CheckUser(int playerNumber);
+        Task<APAPlayer> SetPassword(int playerNumber, string password);
+        Task<APAPlayer> GetPlayer(int playerNumber);
     }
     public class Repository(string defaultConnection) : IRepository
     {
@@ -118,10 +124,13 @@ namespace ReactProj
         }
         public async Task<APAPlayer> ValidateLogin(int playerNumber, string password)
         {
-            await using var dbCon = new MySqlConnection(_connectionString);
-            await dbCon.OpenAsync();
-            var result = await dbCon.QuerySingleAsync<APAPlayer>("SELECT * from apa.apaplayers where playerId=@no and scoreable=1", new { no = playerNumber });
-            return result;
+            var player = await GetPlayer(playerNumber);
+            if (!player.CanScoreFor)
+                throw new InvalidOperationException($"Player number {0} is not a valid user");
+            var hasher = new PasswordHasher<APAPlayer>();
+            if (hasher.VerifyHashedPassword(player, player.Password, password) != PasswordVerificationResult.Success)
+                throw new InvalidOperationException($"Invalid password for user: {playerNumber}");
+            return player;
         }
 
         public async Task<bool> UpdatePlayer(APAPlayer player)
@@ -137,6 +146,49 @@ namespace ReactProj
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public async Task<bool> CheckUser(int playerNumber)
+        {
+            var player = await GetPlayer(playerNumber);
+            if (player.CanScoreFor)
+                return string.IsNullOrEmpty(player.Password);
+            throw new InvalidOperationException($"Player number {playerNumber} is not a valid user");
+        }
+
+        public async Task<APAPlayer> SetPassword(int playerNumber, string password)
+        {
+            var hasher = new PasswordHasher<APAPlayer>();
+            var player = await GetPlayer(playerNumber);
+            if (!player.CanScoreFor)
+                throw new InvalidOperationException($"Player number {playerNumber} is not a valid user");
+            var hashedPwd = hasher.HashPassword(player, password);
+            try
+            {
+                await using var dbCon = new MySqlConnection(_connectionString);
+                await dbCon.OpenAsync();
+                await dbCon.QueryAsync("update apaplayers set password=@pwd where playerId=@no", new { no = playerNumber, pwd = hashedPwd });
+                return player;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<APAPlayer> GetPlayer(int playerNumber)
+        {
+            try
+            {
+                await using var dbCon = new MySqlConnection(_connectionString);
+                await dbCon.OpenAsync();
+                var player = await dbCon.QueryFirstAsync<APAPlayer>("select * from apaplayers where playerId=@no", new { no = playerNumber });
+                return player;
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException($"No player found with player number {playerNumber}");
             }
         }
     }
