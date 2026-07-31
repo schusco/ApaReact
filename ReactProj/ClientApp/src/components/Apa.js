@@ -70,7 +70,7 @@ function APA() {
                 <button
                     type="button"
                     className={`btn ${activeTab === '8' ? 'btn-primary' : 'btn-outline-primary'}`}
-                    onClick={() => toggleDisplay('8')}>8 Ball Score</button>
+                    onClick={() => toggleDisplay('8')}>8 Ball Scores</button>
             </div>
             <div className="row g-3 mb-3">
                 <label className="col-sm-2 col-form-label">Score Date</label>

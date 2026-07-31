@@ -74,7 +74,7 @@ namespace ReactProj
             {
                 await using var dbCon = new MySqlConnection(_connectionString);
                 await dbCon.OpenAsync();
-                await dbCon.QueryAsync("insert into apaplayers values (@id,@last,@first,@score)",
+                await dbCon.QueryAsync("insert into apaplayers (playerId,lastName,firstName,scoreable) values (@id,@last,@first,@score)",
                     new { id = newPlayer.PlayerNumber, last = newPlayer.LastName, first = newPlayer.FirstName, score = newPlayer.CanScoreFor });
                 return true;
             }
