@@ -12,7 +12,7 @@ export function NavMenu() {
         setCollapsed(!collapsed);
     }
     const handleLogoutClick = (e) => {
-        e.preventDefault(); // Prevents the browser from jumping or reloading via the href  
+        e.preventDefault(); 
         if (logout) {
             logout();
         }
