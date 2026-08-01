@@ -45,7 +45,7 @@ function Settings() {
             <div className="row g-3 mb-3">
                 <label className="col-sm-2 col-form-label">9 Ball SL</label>
                 <div className="col-auto">
-                    <input type="number" className="form-control" name="points" value={data.sl9} onChange={handleChange} />
+                    <input type="number" className="form-control" name="sl9" value={data.sl9} onChange={handleChange} />
                 </div>
             </div>
             <div className="row g-3 mb-3">
