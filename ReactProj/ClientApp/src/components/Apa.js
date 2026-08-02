@@ -7,9 +7,11 @@ function APA() {
     const { playerList, isLoading, user } = usePlayers();
     const [activeTab, setActiveTab] = useState('9');
     const [submitUrl, setSubmitUrl] = useState('/api/apa');
-    let playerNo = user ? user.result.playerNumber : 0;
-    let sl9 = user ? user.result.sl9 : 0;
-    let sl8 = user ? user.result.sl8 : 0;
+    console.log('currewnt user is:');
+    console.log(user);
+    let playerNo = user ? user.playerNumber : 0;
+    let sl9 = user ? user.sl9 : 0;
+    let sl8 = user ? user.sl8 : 0;
     let curSl = sl9;
     let initState = {
         date: '', innings: 0, defenses: 0, balls: 0, oppBalls: 0, sl: curSl, oppsl: 0, playerId: playerNo
@@ -26,9 +28,9 @@ function APA() {
         }
     }
     useEffect(() => {
-        let playerNo = user ? user.result.playerNumber : 0;
-        let sl9 = user ? user.result.sl9 : 0;
-        let sl8 = user ? user.result.sl8 : 0;
+        let playerNo = user ? user.playerNumber : 0;
+        let sl9 = user ? user.sl9 : 0;
+        let sl8 = user ? user.sl8 : 0;
         if (activeTab === '8') {
             setFormData({
                 date: '', innings: 0, defenses: 0, points: 0, games: 0, sl: sl8, oppsl: 0, playerId: playerNo

@@ -6,11 +6,11 @@ function Settings() {
     const navigate = useNavigate();
     let initState = { firstName: '', lastName: 0, sl8: 0, sl9: 0, playerNumber: 0 };
     if (user) {
-        initState.firstName = user.result.firstName;
-        initState.lastName = user.result.lastName;
-        initState.sl8 = user.result.sl8;
-        initState.sl9 = user.result.sl9;
-        initState.playerNumber = user.result.playerNumber;
+        initState.firstName = user.firstName;
+        initState.lastName = user.lastName;
+        initState.sl8 = user.sl8;
+        initState.sl9 = user.sl9;
+        initState.playerNumber = user.playerNumber;
     }
     const handleSave = (result) => {
         setUser({ result }); 

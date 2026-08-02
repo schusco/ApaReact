@@ -7,7 +7,7 @@ import './components/site.css';
 import { PlayerProvider } from './context/PlayerContext';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-export function App() {
+export function App() {    
     return (
         <PlayerProvider>
             <Layout>

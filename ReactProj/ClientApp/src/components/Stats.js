@@ -12,8 +12,8 @@ function Stats() {
         async function fetchScores() {
             try {
                 const [scores9Response, scores8Response] = await Promise.all([
-                    fetch('/api/apa').then(res => res.json()),
-                    fetch('/api/apa8').then(res => res.json())]);
+                    fetch(`/api/apa/${user.playerNumber}`).then(res => res.json()),
+                    fetch(`/api/apa8/${user.playerNumber}`).then(res => res.json())]);
                 setScores8(scores8Response);
                 setScores9(scores9Response);
             } catch (error) {

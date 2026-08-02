@@ -34,7 +34,7 @@ namespace ReactProj
         {
             await using var dbCon = new MySqlConnection(_connectionString);
             await dbCon.OpenAsync();
-            var scores = await dbCon.QueryAsync<APA8BallScore>("SELECT * FROM scores8 order by scoredate where playerId=@no desc limit 20", new { no = playerId });
+            var scores = await dbCon.QueryAsync<APA8BallScore>("SELECT * FROM scores8 where playerId=@no order by scoredate desc limit 20", new { no = playerId });
             return [.. scores];
         }
         public async Task<IList<APAPlayer>> GetPlayers()

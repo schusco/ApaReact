@@ -3,7 +3,10 @@
 export const PlayerContext = createContext();
 
 export function PlayerProvider({ children }) {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const storedUser = sessionStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
     const [playerList, setPlayerList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     // Fetch once when the app boots up
@@ -30,11 +33,13 @@ export function PlayerProvider({ children }) {
             throw new Error('Login failed');
         }
         const result = await loginResponse.json();
-        setUser({ result });
+        sessionStorage.setItem('user', JSON.stringify(result));
+        setUser(result);
     }
 
     const logout = () => {
         setUser(null);
+        sessionStorage.removeItem('user');
     }
 
     return (
