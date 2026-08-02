@@ -7,10 +7,10 @@ namespace ReactProj.Controllers
     [Route("api/[controller]")]
     public class ApaController(IRepository repository) : BaseController(repository)
     {
-        [HttpGet]
-        public async Task<IList<APA9BallScore>> Get()
+        [HttpGet("{playerId:int}")]
+        public async Task<IList<APA9BallScore>> Get(int playerId)
         {
-            var scores = await Repository.Get9BallScores();            
+            var scores = await Repository.Get9BallScores(playerId);            
             return scores;
         }
         [HttpPost]

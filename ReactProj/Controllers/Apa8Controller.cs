@@ -7,10 +7,10 @@ namespace ReactProj.Controllers
     [ApiController]
     public class Apa8Controller(IRepository repository) : BaseController(repository)
     {
-        [HttpGet]
-        public async Task<IList<APA8BallScore>> Get()
+        [HttpGet("{playerId:int}")]
+        public async Task<IList<APA8BallScore>> Get(int playerId)
         {
-            return await Repository.Get8BallScores();
+            return await Repository.Get8BallScores(playerId);
         }
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Player8BallScore model)

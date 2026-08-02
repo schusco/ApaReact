@@ -1,16 +1,14 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Identity;
 using MySql.Data.MySqlClient;
-using Org.BouncyCastle.Ocsp;
 using ReactProj.Models;
-using static com.sun.tools.@internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 
 namespace ReactProj
 {
     public interface IRepository
     {
-        Task<IList<APA9BallScore>> Get9BallScores();
-        Task<IList<APA8BallScore>> Get8BallScores();
+        Task<IList<APA9BallScore>> Get9BallScores(int playerId);
+        Task<IList<APA8BallScore>> Get8BallScores(int playerId);
         Task<IList<APAPlayer>> GetPlayers();
         Task<bool> Add9BallScore(Player9BallScore model);
         Task<bool> AddPlayer(APAPlayer newPlayer);
@@ -25,18 +23,18 @@ namespace ReactProj
     public class Repository(string defaultConnection) : IRepository
     {
         private readonly string _connectionString = defaultConnection;
-        public async Task<IList<APA9BallScore>> Get9BallScores()
+        public async Task<IList<APA9BallScore>> Get9BallScores(int playerId)
         {
             await using var dbCon = new MySqlConnection(_connectionString);
             await dbCon.OpenAsync();
-            var scores = await dbCon.QueryAsync<APA9BallScore>("SELECT scoredate as Date,result as isWin,innings,defenses,balls,oppBalls,sl as PlayerSl,oppsl as OppPlayerSl FROM scores9 order by scoredate desc limit 20");
+            var scores = await dbCon.QueryAsync<APA9BallScore>("SELECT scoredate as Date,result as isWin,innings,defenses,balls,oppBalls,sl as PlayerSl,oppsl as OppPlayerSl FROM scores9 where playerId=@no order by scoredate desc limit 20", new { no = playerId });
             return [.. scores];
         }
-        public async Task<IList<APA8BallScore>> Get8BallScores()
+        public async Task<IList<APA8BallScore>> Get8BallScores(int playerId)
         {
             await using var dbCon = new MySqlConnection(_connectionString);
             await dbCon.OpenAsync();
-            var scores = await dbCon.QueryAsync<APA8BallScore>("SELECT * FROM scores8 order by scoredate desc limit 20");
+            var scores = await dbCon.QueryAsync<APA8BallScore>("SELECT * FROM scores8 order by scoredate where playerId=@no desc limit 20", new { no = playerId });
             return [.. scores];
         }
         public async Task<IList<APAPlayer>> GetPlayers()
