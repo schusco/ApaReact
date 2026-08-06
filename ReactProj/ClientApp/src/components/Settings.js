@@ -13,7 +13,7 @@ function Settings() {
         initState.playerNumber = user.playerNumber;
     }
     const handleSave = (result) => {
-        setUser({ result }); 
+        setUser(result); 
         navigate('/');
     }
 
