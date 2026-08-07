@@ -131,7 +131,6 @@ namespace ReactProj
                 throw new InvalidOperationException($"Invalid password for user: {playerNumber}");
             return player;
         }
-
         public async Task<bool> UpdatePlayer(APAPlayer player)
         {
             try
@@ -147,7 +146,6 @@ namespace ReactProj
                 return false;
             }
         }
-
         public async Task<bool> CheckUser(int playerNumber)
         {
             var player = await GetPlayer(playerNumber);
@@ -155,7 +153,6 @@ namespace ReactProj
                 return string.IsNullOrEmpty(player.Password);
             throw new InvalidOperationException($"Player number {playerNumber} is not a valid user");
         }
-
         public async Task<APAPlayer> SetPassword(int playerNumber, string password)
         {
             var hasher = new PasswordHasher<APAPlayer>();
@@ -175,14 +172,13 @@ namespace ReactProj
                 throw;
             }
         }
-
         public async Task<APAPlayer> GetPlayer(int playerNumber)
         {
             try
             {
                 await using var dbCon = new MySqlConnection(_connectionString);
                 await dbCon.OpenAsync();
-                var player = await dbCon.QueryFirstAsync<APAPlayer>("select * from apaplayers where playerId=@no", new { no = playerNumber });
+                var player = await dbCon.QueryFirstAsync<APAPlayer>("select * from apaplayers where playerId=@no", new { no = playerNumber });                
                 return player;
             }
             catch (Exception)

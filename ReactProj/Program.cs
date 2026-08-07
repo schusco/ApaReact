@@ -1,4 +1,6 @@
 using Dapper.FluentMap;
+using FluentMigrator;
+using FluentMigrator.Runner;
 using ReactProj;
 using ReactProj.Mappings;
 
@@ -11,13 +13,19 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("https://localhost:44424")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
 var con = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<IRepository>(sp => new Repository(con));
+builder.Services.AddFluentMigratorCore()
+    .ConfigureRunner(rb => rb
+        .AddMySql5()
+        .WithGlobalConnectionString(con)
+        .ScanIn(typeof(Program).Assembly).For.Migrations())
+    .AddLogging(lb => lb.AddFluentMigratorConsole());
 FluentMapper.Initialize(config =>
 {
     config.AddMap(new APA8BallScoreMap());
@@ -35,6 +43,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.Services.CreateScope().ServiceProvider.GetRequiredService<IMigrationRunner>().MigrateUp();
 
 app.MapControllerRoute(
     name: "default",

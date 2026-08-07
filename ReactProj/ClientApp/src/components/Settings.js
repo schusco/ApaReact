@@ -33,13 +33,13 @@ function Settings() {
             <div className="row g-3 mb-3">
                 <label className="col-sm-2 col-form-label">Last Name</label>
                 <div className="col-auto">
-                    <input type="text" className=" col-sm-5 form-control" id="inningsInput" name="innings" value={data.lastName} onChange={handleChange} />
+                    <input type="text" className=" col-sm-5 form-control" name="lastName" value={data.lastName} onChange={handleChange} />
                 </div>
             </div>
             <div className="row g-3 mb-3">
                 <label className="col-sm-2 col-form-label">8 Ball SL</label>
                 <div className="col-auto">
-                    <input type="number" className="form-control" id="defensesInput" name="sl8" value={data.sl8} onChange={handleChange} />
+                    <input type="number" className="form-control" name="sl8" value={data.sl8} onChange={handleChange} />
                 </div>
             </div>
             <div className="row g-3 mb-3">
