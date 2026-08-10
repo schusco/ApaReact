@@ -21,10 +21,10 @@ function APA() {
         setActiveTab(format);
         if (format === '9') {
             curSl = sl9;
-            setSubmitUrl(`/api/apa/${playerNo}`);
+            setSubmitUrl(`/api/apa`);
         } else {
             curSl = sl8;
-            setSubmitUrl(`api/apa8/${playerNo}`);
+            setSubmitUrl(`api/apa8`);
         }
     }
     useEffect(() => {

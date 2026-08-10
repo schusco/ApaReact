@@ -15,8 +15,8 @@ namespace ReactProj.Controllers
             var scores = await Repository.Get9BallScores(playerId);
             return scores;
         }
-        [HttpPost("{playerId:int}")]
-        public async Task<IActionResult> Post(int playerId, [FromBody] Player9BallScore model)
+        [HttpPost()]
+        public async Task<IActionResult> Post([FromBody] Player9BallScore model)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace ReactProj.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while adding 9-ball score for player ID {PlayerId}", playerId);
+                _logger.LogError(ex, "Error occurred while adding 9-ball score for player ID {PlayerId}", model.PlayerId);
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
